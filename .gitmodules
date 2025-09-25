@@ -1,0 +1,3 @@
+[submodule "iwa-main-gateway-api"]
+	path = iwa-main-gateway-api
+	url = git@github.com:IGDevX/iwa-main-gateway-api.git
