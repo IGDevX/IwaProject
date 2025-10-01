@@ -22,6 +22,7 @@ jobs:
           vpn_ike: ${{ secrets.VPN_IKE }}
           vpn_esp: ${{ secrets.VPN_ESP }}
           run_command: |
+            nslookup ${{ secrets.DOKKU_ADDR }}
             HOST_IP=$(nslookup ${{ secrets.DOKKU_ADDR }} | awk '/^Address: / { print $2 }' | tail -n1)
             IFACE="${{ steps.vpn.outputs.ppp_interface }}"
 
