@@ -25,14 +25,6 @@ jobs:
             HOST_IP=$(nslookup ${{ secrets.DOKKU_HOST }} | awk '/^Address: / { print $2 }' | tail -n1)
             IFACE="${{ steps.vpn.outputs.ppp_interface }}"
 
-            if [[ -z "$HOST_IP" ]]; then
-              echo "Missing HOST_IP"
-            fi
-
-            if [[ -z "$IFACE" ]]; then
-              echo "Missing IFACE"
-            fi
-
             sudo ip route add "$HOST_IP" dev "$IFACE"
             
             echo "🔹 Deploying all services from manifest..."
