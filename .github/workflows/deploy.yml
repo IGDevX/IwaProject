@@ -28,7 +28,7 @@ jobs:
 
       - name: VPN Connect & Deploy updated services
         if: env.CHANGED_SERVICES != ''
-        uses: igdevx/vpn-connect@v0.2
+        uses: igdevx/vpn-connect@v0.3
         with:
           vpn_gateway: ${{ secrets.VPN_GATEWAY }}
           vpn_psk: ${{ secrets.VPN_PSK }}
