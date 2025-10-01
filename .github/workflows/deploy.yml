@@ -28,7 +28,7 @@ jobs:
 
       - name: VPN Connect & Deploy updated services
         if: env.CHANGED_SERVICES != ''
-        uses: igdevx/vpn-connect@v0.1
+        uses: igdevx/vpn-connect@v0.2
         with:
           vpn_gateway: ${{ secrets.VPN_GATEWAY }}
           vpn_psk: ${{ secrets.VPN_PSK }}
@@ -38,16 +38,16 @@ jobs:
           run_command: |
             echo "🔹 Redeploying updated services only..."
 
+            mkdir -p ~/.ssh
+            echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/dokku
+            chmod 600 ~/.ssh/dokku
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/dokku
+            ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts
+
             for service in $CHANGED_SERVICES; do
               IMAGE=$(yq -r ".services.\"$service\"" deployment-manifest.yaml)
               echo "Deploying $service with image $IMAGE"
-
-              mkdir -p ~/.ssh
-              echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/id_rsa
-              chmod 600 ~/.ssh/id_rsa
-              eval "$(ssh-agent -s)"
-              ssh-add ~/.ssh/id_rsa
-              ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts
 
               ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
             done
