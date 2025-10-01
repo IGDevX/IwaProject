@@ -22,7 +22,9 @@ jobs:
             echo "🔹 Deploying all services from manifest..."
 
             mkdir -p ~/.ssh
-            echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/dokku
+            cat <<EOF > ~/.ssh/dokku
+            ${{ secrets.DOKKU_SSH_KEY }}
+            EOF
             chmod 600 ~/.ssh/dokku
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/dokku

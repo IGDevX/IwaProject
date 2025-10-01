@@ -39,7 +39,9 @@ jobs:
             echo "🔹 Redeploying updated services only..."
 
             mkdir -p ~/.ssh
-            echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/dokku
+            cat <<EOF > ~/.ssh/id_rsa
+            ${{ secrets.DOKKU_SSH_KEY }}
+            EOF
             chmod 600 ~/.ssh/dokku
             eval "$(ssh-agent -s)"
             ssh-add ~/.ssh/dokku
