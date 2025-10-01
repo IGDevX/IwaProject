@@ -1,0 +1,2 @@
+services:
+  marche-conclu-api-gateway:   "ghcr.io/igdevx/iwa-main-gateway-api:v0.0.3"

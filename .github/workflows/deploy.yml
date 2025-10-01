@@ -1,0 +1,56 @@
+name: Deploy to Dokku (via VPN)
+
+on:
+  push:
+    paths:
+      - 'deployment-manifest.yaml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # needed so we can diff against previous commit
+
+      - name: Extract updated services from manifest
+        id: manifest
+        run: |
+          # Get changed services by diffing manifest
+          CHANGED_SERVICES=$(git diff HEAD^ HEAD -- deployment-manifest.yaml | \
+            grep '^[+-]  ' | grep -v '^[+-]  services:' | sed -E 's/^[+-]  "?(.*)"?:.*/\1/' | sort -u)
+
+          echo "CHANGED_SERVICES=$CHANGED_SERVICES" >> $GITHUB_ENV
+
+          echo "🔍 Services changed in manifest:"
+          echo "$CHANGED_SERVICES"
+
+      - name: VPN Connect & Deploy updated services
+        if: env.CHANGED_SERVICES != ''
+        uses: igdevx/vpn-connect@v0.1
+        with:
+          vpn_gateway: ${{ secrets.VPN_GATEWAY }}
+          vpn_psk: ${{ secrets.VPN_PSK }}
+          vpn_username: ${{ secrets.VPN_USERNAME }}
+          vpn_password: ${{ secrets.VPN_PASSWORD }}
+          vpn_nt_domain: ${{ secrets.VPN_NT_DOMAIN }}
+          run_command: |
+            echo "🔹 Redeploying updated services only..."
+
+            for service in $CHANGED_SERVICES; do
+              IMAGE=$(yq -r ".services.\"$service\"" deployment-manifest.yaml)
+              echo "Deploying $service with image $IMAGE"
+
+              mkdir -p ~/.ssh
+              echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/id_rsa
+              chmod 600 ~/.ssh/id_rsa
+              eval "$(ssh-agent -s)"
+              ssh-add ~/.ssh/id_rsa
+              ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts
+
+              ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
+            done
+
+            echo "✅ Updated services deployed!"
+
