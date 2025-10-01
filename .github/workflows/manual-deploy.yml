@@ -1,0 +1,39 @@
+name: Manual full deploy to Dokku (via VPN)
+
+on:
+  workflow_dispatch:   # allows triggering manually in GitHub UI
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: VPN Connect & Deploy all services
+        uses: igdevx/vpn-connect@v0.2
+        with:
+          vpn_gateway: ${{ secrets.VPN_GATEWAY }}
+          vpn_psk: ${{ secrets.VPN_PSK }}
+          vpn_username: ${{ secrets.VPN_USERNAME }}
+          vpn_password: ${{ secrets.VPN_PASSWORD }}
+          vpn_nt_domain: ${{ secrets.VPN_NT_DOMAIN }}
+          run_command: |
+            echo "🔹 Deploying all services from manifest..."
+
+            mkdir -p ~/.ssh
+            echo "${{ secrets.DOKKU_SSH_KEY }}" > ~/.ssh/dokku
+            chmod 600 ~/.ssh/dokku
+            eval "$(ssh-agent -s)"
+            ssh-add ~/.ssh/dokku
+            ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts
+
+            MANIFEST=$(yq -r '.services' deployment-manifest.yaml)
+            for service in $(echo "$MANIFEST" | jq -r 'keys[]'); do
+              IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
+              echo "Deploying $service with image $IMAGE"
+
+              ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
+            done
+
+            echo "✅ All services deployed!"
