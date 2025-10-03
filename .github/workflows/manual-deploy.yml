@@ -44,7 +44,7 @@ jobs:
         run: |
           echo "🔹 Deploying all services from manifest..."
           
-          MANIFEST=$(yq -r '.services' deployment-manifest.yaml)
+          MANIFEST=$(yq --o=json '.services' deployment-manifest.yaml)
           for service in $(echo "$MANIFEST" | jq -r 'keys[]'); do
             IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
             echo "Deploying $service with image $IMAGE"
