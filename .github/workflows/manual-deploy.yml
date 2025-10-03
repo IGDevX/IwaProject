@@ -38,7 +38,7 @@ jobs:
           chmod 600 ~/.ssh/dokku
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/dokku
-          ssh-keyscan -H "${{ secrets.DOKKU_ADDR }}" >> ~/.ssh/known_hosts || { echo "❌ ssh-keyscan failed"; exit 1; }
+          ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts || { echo "❌ ssh-keyscan failed"; exit 1; }
       
       - name: Deploy all services
         run: |
