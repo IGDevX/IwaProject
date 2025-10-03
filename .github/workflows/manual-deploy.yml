@@ -32,12 +32,12 @@ jobs:
       - name: SSH key setup
         run: |
           mkdir -p ~/.ssh
-          cat <<EOF > ~/.ssh/dokku
+          cat <<EOF > ~/.ssh/id_ed25519
           ${{ secrets.DOKKU_SSH_KEY }}
           EOF
-          chmod 600 ~/.ssh/dokku
+          chmod 600 ~/.ssh/id_ed25519
           eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/dokku
+          ssh-add ~/.ssh/id_ed25519
           ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts || { echo "❌ ssh-keyscan failed"; exit 1; }
       
       - name: Deploy all services
