@@ -49,8 +49,7 @@ jobs:
             IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
             echo "Deploying $service with image $IMAGE"
 
-            output=$(ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE)
-            echo $output
+            ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
           done
 
           echo "✅ All services deployed!"
