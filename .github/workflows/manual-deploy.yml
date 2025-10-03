@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: VPN Connect & Deploy all services
+      - name: VPN Connect
         uses: igdevx/vpn-connect@v0.6
         id: vpn
         with:
@@ -49,7 +49,8 @@ jobs:
             IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
             echo "Deploying $service with image $IMAGE"
 
-            ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
+            output=$(ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE)
+            echo $output
           done
 
           echo "✅ All services deployed!"
