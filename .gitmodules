@@ -4,6 +4,3 @@
 [submodule "iwa-mobile-frontend"]
 	path = iwa-mobile-frontend
 	url = git@github.com:IGDevX/iwa-mobile-frontend.git
-[submodule "iwa-eureka-server"]
-	path = iwa-eureka-server
-	url = git@github.com:IGDevX/iwa-eureka-server.git
