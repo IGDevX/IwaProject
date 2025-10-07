@@ -28,7 +28,7 @@ jobs:
           echo "$CHANGED_SERVICES"
 
       - name: VPN Connect
-        uses: igdevx/vpn-connect@v1
+        uses: igdevx/l2tp-ipsec-vpn-action@v2
         id: vpn
         with:
           vpn_gateway: ${{ secrets.VPN_GATEWAY }}
@@ -70,7 +70,3 @@ jobs:
           done
 
           echo "✅ Updated services deployed!"
-
-      - name: Disconnect VPN
-        if: always()
-        uses: igdevx/vpn-disconnect@v0.1
