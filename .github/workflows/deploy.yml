@@ -74,24 +74,3 @@ jobs:
       - name: Disconnect VPN
         if: always()
         uses: igdevx/vpn-disconnect@v0.1
-
-      - name: VPN Connect & Deploy updated services
-        if: env.CHANGED_SERVICES != ''
-        uses: igdevx/vpn-connect@v0.5
-        id: vpn
-        with:
-          vpn_gateway: ${{ secrets.VPN_GATEWAY }}
-          vpn_psk: ${{ secrets.VPN_PSK }}
-          vpn_username: ${{ secrets.VPN_USERNAME }}
-          vpn_password: ${{ secrets.VPN_PASSWORD }}
-          vpn_nt_domain: ${{ secrets.VPN_NT_DOMAIN }}
-          vpn_ike: ${{ secrets.VPN_IKE }}
-          vpn_esp: ${{ secrets.VPN_ESP }}
-          run_command: |
-            sudo ip route add $(nslookup ${{ secrets.DOKKU_ADDR }} | awk '/^Address: / { print $2 }' | tail -n1) dev ${{ steps.vpn.outputs.ppp_interface }}
-            
-            
-
-      
-      
-      
