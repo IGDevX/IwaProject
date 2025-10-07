@@ -47,9 +47,17 @@ jobs:
           MANIFEST=$(yq eval -o=json '.services' deployment-manifest.yaml)
           for service in $(echo "$MANIFEST" | jq -r 'keys[]'); do
             IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
-            echo "Deploying $service with image $IMAGE"
-
-            ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image $service $IMAGE
+            
+            echo "🔄 Deploying $service from $IMAGE ..."
+            if ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image "$service" "$IMAGE"; then
+              echo "✅ Deployment successful!"
+            else
+              echo "⚠️ Deployment failed — app likely doesn't exist. Creating it..."
+              ssh dokku@${{ secrets.DOKKU_HOST }} apps:create "$service"
+              echo "🔁 Retrying deployment..."
+              ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image "$service" "$IMAGE"
+              echo "✅ Deployment complete!"
+            fi
           done
 
           echo "✅ All services deployed!"
