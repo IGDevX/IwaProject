@@ -1,4 +1,4 @@
 services:
-  marche-conclu-eureka-server: "ghcr.io/igdevx/eureka-server:v0.1.0"
-  marche-conclu-config-server: "ghcr.io/igdevx/config-server:v0.1.0"
-  marche-conclu-main-gateway-api:   "ghcr.io/igdevx/marche-conclu-main-gateway-api:v0.1.0"
+  marche-conclu-eureka-server: "ghcr.io/igdevx/eureka-server:v0.0.0"
+  marche-conclu-config-server: "ghcr.io/igdevx/config-server:v0.0.0"
+  marche-conclu-main-gateway-api: "ghcr.io/igdevx/marche-conclu-main-gateway-api:v0.0.0"
