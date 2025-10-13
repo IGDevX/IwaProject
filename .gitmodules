@@ -1,6 +1,15 @@
-[submodule "iwa-main-gateway-api"]
-	path = iwa-main-gateway-api
-	url = git@github.com:IGDevX/iwa-main-gateway-api.git
 [submodule "iwa-mobile-frontend"]
 	path = iwa-mobile-frontend
 	url = git@github.com:IGDevX/iwa-mobile-frontend.git
+[submodule "marche-conclu-main-gateway-api"]
+	path = marche-conclu-main-gateway-api
+	url = git@github.com:IGDevX/marche-conclu-main-gateway-api.git
+[submodule "marche-conclu-config"]
+	path = marche-conclu-config
+	url = git@github.com:IGDevX/marche-conclu-config.git
+[submodule "eureka-server"]
+	path = eureka-server
+	url = git@github.com:IGDevX/eureka-server.git
+[submodule "config-server"]
+	path = config-server
+	url = git@github.com:IGDevX/config-server.git
