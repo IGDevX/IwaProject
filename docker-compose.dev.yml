@@ -1,0 +1,39 @@
+services:
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8761:8761"
+    networks:
+      - dev-network
+
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8888:8888"
+    depends_on:
+      eureka-server:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+  main-gateway-api:
+    build:
+      context: ./marche-conclu-main-gateway-api
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    driver: bridge
