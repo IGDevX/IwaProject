@@ -20,7 +20,7 @@ jobs:
           # Get changed services by diffing manifest
           CHANGED_SERVICES=$(git diff HEAD^ HEAD -- deployment-manifest.yaml | \
             grep -E '^[+-]\s+[a-zA-Z0-9._-]+:' | \
-            sed -E 's/^[+-]\s*([^:]+):.*/\1/' | tr '\n' ' ')
+            sed -E 's/^[+-]\s*([^:]+):.*/\1/' | awk '!seen[$0]++' | tr '\n' ' ')
 
           echo "CHANGED_SERVICES=$CHANGED_SERVICES" >> $GITHUB_ENV
 
