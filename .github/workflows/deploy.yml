@@ -57,7 +57,7 @@ jobs:
           ssh-add ~/.ssh/id_ed25519
           ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts || { echo "❌ ssh-keyscan failed"; exit 1; }
 
-      - name: Deploy all services
+      - name: Deploy updated services
         run: |
           echo "🔹 Redeploying updated services only..."
 

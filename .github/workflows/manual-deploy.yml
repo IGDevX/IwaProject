@@ -39,7 +39,7 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ~/.ssh/id_ed25519
           ssh-keyscan -H "${{ secrets.DOKKU_HOST }}" >> ~/.ssh/known_hosts || { echo "❌ ssh-keyscan failed"; exit 1; }
-      
+
       - name: Deploy all services
         run: |
           echo "🔹 Deploying all services from manifest..."
@@ -49,8 +49,13 @@ jobs:
             IMAGE=$(echo "$MANIFEST" | jq -r ".\"$service\"")
             
             echo "🔄 Deploying $service from $IMAGE ..."
-            if ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image "$service" "$IMAGE"; then
-              echo "✅ Deployment successful!"
+            
+            OUTPUT=$(ssh dokku@${{ secrets.DOKKU_HOST }} git:from-image "$service" "$IMAGE" 2>&1) || true
+            
+            if echo "$OUTPUT" | grep -q "ps:rebuild"; then
+              echo "ℹ️ $service already exists — rebuilding instead..."
+              ssh dokku@${{ secrets.DOKKU_HOST }} ps:rebuild "$service"
+              echo "✅ Rebuild complete!"
             else
               echo "⚠️ Deployment failed — app likely doesn't exist. Creating it..."
               ssh dokku@${{ secrets.DOKKU_HOST }} apps:create "$service"
