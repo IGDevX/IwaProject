@@ -3,6 +3,7 @@ services:
     build:
       context: ./eureka-server
       dockerfile: Dockerfile.dev
+    profiles: [discovery, shared]
     ports:
       - "8761:8761"
     networks:
@@ -12,6 +13,7 @@ services:
     build:
       context: ./config-server
       dockerfile: Dockerfile.dev
+    profiles: [config, shared]
     ports:
       - "8888:8888"
     depends_on:
@@ -21,14 +23,62 @@ services:
     networks:
       - dev-network
 
+  db:
+    image: postgres
+    profiles: [db, shared]
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pwd
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
+
   main-gateway-api:
     build:
-      context: ./marche-conclu-main-gateway-api
+      context: ./main-gateway-api
       dockerfile: Dockerfile.dev
+    profiles: [gateway, shared]
     ports:
       - "8080:8080"
     depends_on:
-      eureka-server:
+      config-server:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+  shop-service:
+    build:
+      context: ./services/shop-service
+      dockerfile: Dockerfile.dev
+    profiles: [shop]
+    ports:
+      - "5000:5000"
+    depends_on:
+      main-gateway-api:
+        condition: service_started
+        restart: true
+      db:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+  user-service:
+    build:
+      context: ./services/user-service
+      dockerfile: Dockerfile.dev
+    profiles: [user]
+    ports:
+      - "5001:5001"
+    depends_on:
+      main-gateway-api:
+        condition: service_started
+        restart: true
+      db:
         condition: service_started
         restart: true
     networks:
@@ -37,3 +87,6 @@ services:
 networks:
   dev-network:
     driver: bridge
+
+volumes:
+  pg-data:
