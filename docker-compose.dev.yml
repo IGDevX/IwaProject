@@ -22,6 +22,11 @@ services:
         restart: true
     networks:
       - dev-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8888/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   db:
     image: postgres
@@ -35,6 +40,13 @@ services:
     volumes:
       - pg-data:/var/lib/postgresql/data
       - ./db-init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev-network
 
   main-gateway-api:
     build:
@@ -56,14 +68,16 @@ services:
       dockerfile: Dockerfile.dev
     profiles: [shop]
     ports:
-      - "5000:5000"
+      - "5002:5002"
     depends_on:
       main-gateway-api:
         condition: service_started
         restart: true
       db:
-        condition: service_started
+        condition: service_healthy
         restart: true
+      config-server:
+        condition: service_healthy
     networks:
       - dev-network
 
