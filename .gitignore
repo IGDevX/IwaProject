@@ -1,0 +1,38 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Build
+/target/
+/.mvn/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Docker
+*.pid
+
+# Node
+node_modules/
+
+# Misc
+*.swp
+*.swo
+
+# Java
+*.class
+
+# Config
+.env
+
+# Others
+*.bak
+*.tmp
