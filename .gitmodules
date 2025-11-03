@@ -13,9 +13,24 @@
 [submodule "services/shop-service"]
 	path = services/shop-service
 	url = git@github.com:IGDevX/marche-conclu-shop-service.git
-[submodule "services/user-service"]
-	path = services/user-service
-	url = git@github.com:IGDevX/marche-conclu-user-service.git
 [submodule "main-gateway-api"]
 	path = main-gateway-api
 	url = git@github.com:IGDevX/marche-conclu-main-gateway-api.git
+[submodule "services/account-service"]
+	path = services/account-service
+	url = git@github.com:IGDevX/marche-conclu-account-service.git
+[submodule "services/nano/billing-service"]
+	path = services/nano/billing-service
+	url = git@github.com:IGDevX/marche-conclu-billing-service.git
+[submodule "services/nano/image-service"]
+	path = services/nano/image-service
+	url = git@github.com:IGDevX/marche-conclu-image-service.git
+[submodule "services/payment-service"]
+	path = services/payment-service
+	url = git@github.com:IGDevX/marche-conclu-payment-service.git
+[submodule "services/order-service"]
+	path = services/order-service
+	url = git@github.com:IGDevX/marche-conclu-order-service.git
+[submodule "services/notification-service"]
+	path = services/notification-service
+	url = git@github.com:IGDevX/marche-conclu-notification-service.git
