@@ -67,11 +67,11 @@ services:
     networks:
       - dev-network
 
-  user-service:
+  account-service:
     build:
-      context: ./services/user-service
+      context: ./services/account-service
       dockerfile: Dockerfile.dev
-    profiles: [user]
+    profiles: [account]
     ports:
       - "5001:5001"
     depends_on:
