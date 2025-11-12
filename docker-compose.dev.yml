@@ -85,6 +85,57 @@ services:
     networks:
       - dev-network
 
+  notification-service:
+    build:
+      context: ./services/notification-service
+      dockerfile: Dockerfile.dev
+    profiles: [notification]
+    ports:
+      - "5002:5002"
+    depends_on:
+      main-gateway-api:
+        condition: service_started
+        restart: true
+      db:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+  order-service:
+    build:
+      context: ./services/order-service
+      dockerfile: Dockerfile.dev
+    profiles: [order]
+    ports:
+      - "5003:5003"
+    depends_on:
+      main-gateway-api:
+        condition: service_started
+        restart: true
+      db:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
+  payment-service:
+    build:
+      context: ./services/payment-service
+      dockerfile: Dockerfile.dev
+    profiles: [payment]
+    ports:
+      - "5004:5004"
+    depends_on:
+      main-gateway-api:
+        condition: service_started
+        restart: true
+      db:
+        condition: service_started
+        restart: true
+    networks:
+      - dev-network
+
 networks:
   dev-network:
     driver: bridge
