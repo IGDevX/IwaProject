@@ -34,6 +34,29 @@ services:
       - "5432:5432"
     volumes:
       - ./db-init:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - dev-network
+
+  keycloak:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile.dev
+    command: start-dev --http-port=3000
+    profiles: [keycloak, shared]
+    restart: always
+    environment:
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: user
+      KC_DB_PASSWORD: pwd
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_started
+        restart: true
     networks:
       - dev-network
 
@@ -46,6 +69,9 @@ services:
       - "8080:8080"
     depends_on:
       config-server:
+        condition: service_started
+        restart: true
+      keycloak:
         condition: service_started
         restart: true
     networks:
@@ -139,3 +165,7 @@ services:
 networks:
   dev-network:
     driver: bridge
+
+
+volumes:
+  db_data:
