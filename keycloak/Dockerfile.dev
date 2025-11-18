@@ -2,6 +2,8 @@ FROM quay.io/keycloak/keycloak:latest
 
 ENV KC_DB=postgres
 
+COPY marche-conclu-realm.json /opt/keycloak/data/import/
+
 RUN /opt/keycloak/bin/kc.sh build
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]

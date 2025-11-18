@@ -42,7 +42,7 @@ services:
     build:
       context: ./keycloak
       dockerfile: Dockerfile.dev
-    command: start-dev --http-port=3000
+    command: start-dev --http-port=3000 --import-realm
     profiles: [keycloak, shared]
     restart: always
     environment:
