@@ -26,7 +26,6 @@ services:
   db:
     image: postgres
     profiles: [db, shared]
-    restart: always
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: pwd
@@ -38,19 +37,37 @@ services:
     networks:
       - dev-network
 
+  kafka:
+    image: apache/kafka
+    profiles: [kafka, shared]
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - dev-network
+
   keycloak:
     build:
       context: ./keycloak
       dockerfile: Dockerfile.dev
     command: start-dev --http-port=3000 --import-realm
     profiles: [keycloak, shared]
-    restart: always
     environment:
       KC_DB_URL: jdbc:postgresql://db:5432/keycloak
       KC_DB_USERNAME: user
       KC_DB_PASSWORD: pwd
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: keycloak
     ports:
       - "3000:3000"
     depends_on:
